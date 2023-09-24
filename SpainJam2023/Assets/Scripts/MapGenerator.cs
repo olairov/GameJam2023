@@ -10,7 +10,7 @@ public class MapGenerator : MonoBehaviour
 
     private Transform playerTransform, sunsTransform, asteroidsTransform;
 
-    private float playerAcomulatedMovement, randomAsteroidGenerationMoment = 30;
+    private float playerAcomulatedMovement, randomAsteroidGenerationMoment = 20;
 
     // Start is called before the first frame update
     void Start()
@@ -32,13 +32,15 @@ public class MapGenerator : MonoBehaviour
 
     void AsteroidGenerationProcess()
     {
-        playerAcomulatedMovement += playerRB.velocity.magnitude;
+        if (HudController.dead) return;
+
+        playerAcomulatedMovement += playerRB.velocity.magnitude * Time.deltaTime;
 
         if (playerAcomulatedMovement >= randomAsteroidGenerationMoment)
         {
             playerAcomulatedMovement = 0;
 
-            randomAsteroidGenerationMoment = Random.Range(20, 50);
+            randomAsteroidGenerationMoment = Random.Range(10, 30);
 
             GenerateAsteroid();
         }

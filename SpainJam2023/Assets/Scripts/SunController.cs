@@ -72,5 +72,10 @@ public class SunController : MonoBehaviour
         {
             HudController.Die();
         }
+
+        if (other.transform.GetComponent<Rigidbody2D>() && other.transform != playerTransform)
+        {
+            Destroy(other.gameObject);
+        }
     }
 }

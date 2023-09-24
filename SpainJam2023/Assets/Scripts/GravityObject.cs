@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class GravityObject : MonoBehaviour
 {
-    private List<Transform> objectsToFall;
+    [SerializeField] private GameObject gravityFieldPrefab_;
+
+    public List<Transform> objectsToFall;
 
     private Transform playerTransform;
 
@@ -12,11 +14,13 @@ public class GravityObject : MonoBehaviour
 
     void Start()
     {
+        Instantiate(gravityFieldPrefab_, transform);
+
         playerTransform = GameObject.Find("Player").transform;
 
         objectsToFall = new List<Transform>();
 
-        if (transform.name != "Player") objectsToFall.Add(playerTransform);
+        objectsToFall.Add(playerTransform);
     }
 
     void FixedUpdate()
