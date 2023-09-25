@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class OrbitingObjController : MonoBehaviour
 {
+    [SerializeField] private List<Sprite> planetSprites;
+    [SerializeField] private List<Color> planetColors;
+
     public float orbitRadius;
     private float objSize, orbitingSpeed, orbitWidthMultiplyer, orbitHeightMultiplayer, anglePos;
 
@@ -17,7 +20,7 @@ public class OrbitingObjController : MonoBehaviour
         playerTransform = GameObject.Find("Player").transform;
         playerRB = playerTransform.GetComponent<Rigidbody2D>();
 
-        // Randomize in function of object's conditions the Speed, the Size, the orbit variations and the Starting angle.
+        // Randomize in function of object's conditions the Speed, the Size, the rotation, the orbit variations, the Starting angle, the sprite and the color.
         CreateStats();
     }
 
@@ -61,7 +64,7 @@ public class OrbitingObjController : MonoBehaviour
         orbitingSpeed = Random.Range(7.5f, 20f);
         if (Random.value > 0.5f) orbitingSpeed *= -1;
 
-        objSize = Random.Range(20f, 40f);
+        objSize = Random.Range(26f, 40f);
 
         if (transform.parent.GetComponent<OrbitingObjController>())
         {
@@ -81,6 +84,16 @@ public class OrbitingObjController : MonoBehaviour
         orbitHeightMultiplayer = Random.Range(0.8f, 1.1f);
 
         anglePos = Random.Range(0, 365);
+
+        SpriteRenderer mySpriteRenderer = transform.GetComponent<SpriteRenderer>();
+
+        int sprite = Random.Range(0, planetSprites.Count);
+        mySpriteRenderer.sprite = planetSprites[sprite];
+
+        int color = Random.Range(0, planetColors.Count);
+        mySpriteRenderer.color = planetColors[color];
+
+        transform.rotation = new Quaternion(0, 0, Random.Range(0, 360), 0);
     }
 
     // To avoid strange colision and unrealistic physics when player lands.

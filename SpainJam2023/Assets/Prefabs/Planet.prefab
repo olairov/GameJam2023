@@ -47,7 +47,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.42
+  m_Radius: 0.4
 --- !u!1 &3966865222021998247
 GameObject:
   m_ObjectHideFlags: 0
@@ -148,6 +148,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 675eaf4d5faa9aa4786c52e1cfcdcd70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  planetSprites:
+  - {fileID: 21300000, guid: c78c5e7801cc2e4428cc4704f9ca18c8, type: 3}
+  - {fileID: 21300000, guid: 506a87a24b55a624db6657db82b72152, type: 3}
+  - {fileID: 21300000, guid: 6f8a843564ef32548a1b82f08258a92e, type: 3}
+  planetColors:
+  - {r: 0.8207547, g: 0.61041766, b: 0.35230508, a: 1}
+  - {r: 0.23139909, g: 0.754717, b: 0.32942137, a: 1}
+  - {r: 0.6134184, g: 0.44535422, b: 0.6792453, a: 1}
+  - {r: 0.3009968, g: 0.49301907, b: 0.7169812, a: 1}
+  - {r: 0.7830189, g: 0.4259857, b: 0.22530258, a: 1}
+  - {r: 0.8962264, g: 0.41006586, b: 0.48550153, a: 1}
+  - {r: 0.5029815, g: 0.8396226, b: 0.7060349, a: 1}
   orbitRadius: 2
   velocity: {x: 0, y: 0}
 --- !u!114 &3966865222021998245

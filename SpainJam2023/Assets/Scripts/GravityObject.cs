@@ -32,7 +32,8 @@ public class GravityObject : MonoBehaviour
 
         for (int i = 0; i < objectsToFall.Count; i++)
         {
-            MakeThingsFall(objectsToFall[i]);
+            if (objectsToFall[i] != null) MakeThingsFall(objectsToFall[i]);
+            else objectsToFall.Remove(objectsToFall[i]);
         }
     }
 
