@@ -52,11 +52,15 @@ public class SunController : MonoBehaviour
         {
             if (distToPlayer >= lightRange) distToPlayer = lightRange;
 
-            HudController.lightExposure = 1 - distToPlayer / lightRange;
+            Debug.Log("Light Rqange: " + lightRange + ", DistToPlayer: " + distToPlayer);
 
-            if (transform.name == "Sun") Debug.Log("BLYYYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADDDDDDDDDDDD");
+            HudController.lightExposure = 1 - distToPlayer / lightRange;
         }
-        else HudController.lightExposure = 0;
+        else
+        {
+            HudController.lightExposure = 0;
+            Debug.Log("BLYYYYYYYYYYYYYYYYYYAAAAAAAAAAAAAAAAAAAAAADDDDDDD");
+        }
     }
 
     void GeneratePlanets()

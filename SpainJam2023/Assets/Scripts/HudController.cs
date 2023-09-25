@@ -49,6 +49,8 @@ public class HudController : MonoBehaviour
     {
         // Manage Light slider.
 
+        Debug.Log("Light EXPOSUREEEEEEEEEEEEEEEEEEEEEEEEEEEE: " + lightExposure);
+
         lightExposureSlider.value = lightExposure;
 
         // Manage Burn slider.
