@@ -10,7 +10,7 @@ public class GravityObject : MonoBehaviour
 
     private Transform playerTransform;
 
-    [SerializeField] private float G;
+    [SerializeField] public float G;
 
     void Start()
     {

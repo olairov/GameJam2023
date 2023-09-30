@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class AsteroidController : MonoBehaviour
 {
+    [SerializeField] private List<Sprite> asteroidSprites;
+    [SerializeField] private List<Color> asteroidColors;
+
     private Transform playerTransform;
 
     // Start is called before the first frame update
@@ -38,5 +41,13 @@ public class AsteroidController : MonoBehaviour
         transform.rotation = new Quaternion(0, 0, dir, 0);
         transform.localScale *= size;
         transform.GetComponent<Rigidbody2D>().velocity = velocity;
+
+        SpriteRenderer mySpriteRenderer = transform.GetComponent<SpriteRenderer>();
+
+        int sprite = Random.Range(0, asteroidSprites.Count);
+        mySpriteRenderer.sprite = asteroidSprites[sprite];
+
+        int color = Random.Range(0, asteroidColors.Count);
+        mySpriteRenderer.color = asteroidColors[color];
     }
 }

@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    static public Transform targetPlanetTransform;
+
     private Rigidbody2D rb;
+
+    private ParticleSystem.EmissionModule emissionModule;
 
     private Vector2 lastPos, worldVelocity;
 
@@ -17,13 +21,21 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        emissionModule = transform.GetChild(0).GetComponent<ParticleSystem>().emission;
+    }
+
+    private void Update()
+    {
+        if (Mathf.Abs(Input.GetAxis("Vertical")) > 0.5f && fuel > 0) emissionModule.enabled = true;
+        else if (Mathf.Abs(Input.GetAxis("Vertical")) < 0.5f || fuel == 0) emissionModule.enabled = false;
     }
 
     void FixedUpdate()
     {
         DetectIfLanded();
 
-        if (fuel != 0)
+        if (fuel != 0 || HudController.dead)
         {
             Move();
 
@@ -64,7 +76,7 @@ public class PlayerController : MonoBehaviour
 
     void DetectIfLanded()
     {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position - transform.up * 0.85f, -transform.up, 0.1f);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position - transform.up * 1.2f, -transform.up, 0.1f);
 
         Transform hitTransform = hit.transform;
 
@@ -76,9 +88,14 @@ public class PlayerController : MonoBehaviour
 
         float heading = Mathf.Abs(((transform.position - hitTransform.position).normalized - transform.up).magnitude);
 
-        if (hitTransform.gameObject.layer == 3 && rb.velocity.magnitude < 1.5f && rb.angularVelocity < 0.8f && heading < 1f)
+        if (hitTransform.gameObject.layer == 3 && rb.velocity.magnitude < 1.5f && rb.angularVelocity < 1f && heading < 1f)
         {
             isLanded = true;
+
+            if (hitTransform == targetPlanetTransform)
+            {
+                HudController.Win();
+            }
         }
     }
 
@@ -91,8 +108,8 @@ public class PlayerController : MonoBehaviour
         if (otherRB != null) speedDifference = Mathf.Abs((otherRB.velocity - worldVelocity).magnitude);
         else speedDifference = Mathf.Abs((other.transform.parent.GetComponent<OrbitingObjController>().velocity - worldVelocity).magnitude);
 
-        if (speedDifference > 16) HudController.Die();
-        if (speedDifference > 6 && !isLanded)
+        if (speedDifference > 24) HudController.Die();
+        if (speedDifference > 10 && !isLanded)
         {
             Vector2 outVector = (transform.position - other.transform.position).normalized;
 

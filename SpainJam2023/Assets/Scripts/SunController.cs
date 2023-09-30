@@ -4,11 +4,19 @@ using UnityEngine;
 
 public class SunController : MonoBehaviour
 {
+    static public bool generationProcessEnded;
+
+    static private int generatedPlanets;
+
     [SerializeField] private GameObject planetPrefab_;
 
     private Transform playerTransform, myChilds;
 
     private float lightRange;
+
+    private bool alreadyReloadedLight;
+
+    private Transform lastPlanet;
 
     void Start()
     {
@@ -39,12 +47,14 @@ public class SunController : MonoBehaviour
 
         // Comprobar si el jugador está cerca para ahorrar recursos.
 
-        if (distToPlayer > 2000)
+        if (distToPlayer > 2000 && generationProcessEnded)
         {
             myChilds.gameObject.SetActive(false);
             return;
         }
         else myChilds.gameObject.SetActive(true);
+
+        if (distToPlayer >= lightRange) return;
 
         RaycastHit2D rayToPlayer = Physics2D.Raycast(transform.position, playerDir);
 
@@ -52,14 +62,11 @@ public class SunController : MonoBehaviour
         {
             if (distToPlayer >= lightRange) distToPlayer = lightRange;
 
-            Debug.Log("Light Rqange: " + lightRange + ", DistToPlayer: " + distToPlayer);
-
-            HudController.lightExposure = 1 - distToPlayer / lightRange;
+            HudController.lightExposure += 1 - distToPlayer / lightRange;
         }
         else
         {
             HudController.lightExposure = 0;
-            Debug.Log("BLYYYYYYYYYYYYYYYYYYAAAAAAAAAAAAAAAAAAAAAADDDDDDD");
         }
     }
 
@@ -67,9 +74,12 @@ public class SunController : MonoBehaviour
     {
         //Generating random num of planets and moons (and avoiding bugs with the light system).
 
-        GameObject light = myChilds.GetChild(0).gameObject;
-
         int planetNum = Random.Range(4, 7);
+
+        MapGenerator.planetsToGenerate += planetNum;
+        generatedPlanets += planetNum;
+
+        GameObject light = myChilds.GetChild(0).gameObject;
 
         for (int i = 0; i < planetNum; i++)
         {
@@ -77,10 +87,21 @@ public class SunController : MonoBehaviour
 
             newPlanetTransform.GetComponent<OrbitingObjController>().orbitRadius = (i + 1) * 125f;
             if (Random.value > 0.65f) Instantiate(planetPrefab_, newPlanetTransform);
+
+            lastPlanet = newPlanetTransform;
         }
 
-        Instantiate(light, transform);
+        Instantiate(light, myChilds);
         Destroy(light);
+    }
+
+    public Transform GetLastPlanet()
+    {
+        if (lastPlanet == null) return null;
+
+        lastPlanet.GetComponent<OrbitingObjController>().makeTargetPlanet();
+
+        return lastPlanet;
     }
 
     private void OnTriggerEnter2D(Collider2D other)

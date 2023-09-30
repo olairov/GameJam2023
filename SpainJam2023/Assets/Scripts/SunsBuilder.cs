@@ -25,18 +25,18 @@ public class SunsBuilder : MonoBehaviour
         set { minDistance = value; }
     }
 
-    private float maxDistance = 1300f;
+    private float maxDistance = 1200f;
     public float MaxDistance
     {
         get { return maxDistance; }
         set { maxDistance = value; }
     }
 
-    private int fastPartsArea = 5;
+    private int farPartsArea = 5;
     public int FastPartsArea
     {
-        get { return fastPartsArea; }
-        set { fastPartsArea = value; }
+        get { return farPartsArea; }
+        set { farPartsArea = value; }
     }
 
     private Collider2D colliderArea;
@@ -50,75 +50,21 @@ public class SunsBuilder : MonoBehaviour
 
     private SortedDictionary<float, Vector3> mapSunDistances = new SortedDictionary<float, Vector3>();
 
-    public List<Vector3> GenerateSequentialsSuns(int countMax)
-    {
-        mapSunDistances.Clear();
-        listSuns.Clear();
-        listSuns.Add(posFirst);
-
-        Debug.Log("SUNS. GenerateSuns.INI");
-        int idx = 0;
-        while (true)
-        {
-            Vector3 posParent = listSuns[idx];
-            int maxChilds = Random.Range(2, 5);
-
-            Debug.Log("SUNS. GenerateSuns.Cicle[" + idx + "]: posParent = " + posParent + " // maxChilds = " + maxChilds);
-
-            for (int numChild = 0; numChild < maxChilds; numChild++)
-            {
-                float randomChildDistance = Random.Range(minDistance * 2, maxDistance * 2);
-                Vector3 posChild = GetCircleRandomPosition(posParent, randomChildDistance);
-
-                Debug.Log("SUNS. GenerateSuns.Cicle[" + idx + "].child[" + numChild + "]: randomChildDistance = " + randomChildDistance + " // posChild = " + posChild);
-
-                if (IsCirlceInRect(posChild, minDistance, colliderArea.bounds.min, colliderArea.bounds.max) && !CanSunCollide(posChild)) AddSun(posChild);
-
-                if (listSuns.Count >= countMax) break;
-            }
-            idx++;
-            if (listSuns.Count >= countMax) break;
-            if (idx >= countMax) break;
-            if (idx >= listSuns.Count) break;
-        }
-
-        Debug.Log("SUNS. GenerateSuns.END");
-        return listSuns;
-    }
-
-    public List<Vector3> GenerateRandomSuns(int countMax)
-    {
-        listSuns.Clear();
-        listSuns.Add(posFirst);
-
-        for (int i = 0; i < countMax; i++)
-        {
-            Vector2 posSun = new Vector2(Random.Range(colliderArea.bounds.min.x + minDistance, colliderArea.bounds.max.x - minDistance), Random.Range(colliderArea.bounds.min.y + minDistance, colliderArea.bounds.max.y - minDistance));
-            if (IsCirlceInRect(posSun, minDistance, colliderArea.bounds.min, colliderArea.bounds.max) && !CanSunCollide(posSun)) AddSun(posSun);
-
-            if (listSuns.Count >= countMax) break;
-        }
-        return listSuns;
-    }
-
     public List<Vector3> GenerateCircularSuns(int countMax)
     {
         listSuns.Clear();
         listSuns.Add(posFirst);
 
-        Debug.Log("SUNS. GenerateSuns.INI");
         int idx = 0;
         while (true)
         {
             Vector3 posParent = listSuns[idx];
-            int maxChilds = Random.Range(3, 5);
 
-            Debug.Log("SUNS. GenerateSuns.Cicle[" + idx + "]: posParent = " + posParent + " // maxChilds = " + maxChilds);
-
-            for (int numChild = 0; numChild < maxChilds; numChild++)
+            while (true)
             {
                 Vector3 posChild = GetChildSunPosition(posParent);
                 if (posChild != Vector3.zero) AddSun(posChild);
+                else break;
                 if (listSuns.Count >= countMax) break;
             }
             idx++;
@@ -126,8 +72,6 @@ public class SunsBuilder : MonoBehaviour
             if (idx >= countMax) break;
             if (idx >= listSuns.Count) break;
         }
-
-        Debug.Log("SUNS. GenerateSuns.END");
         return listSuns;
     }
 
@@ -138,7 +82,7 @@ public class SunsBuilder : MonoBehaviour
         for (int angleStep = 0; angleStep < 360; angleStep += 15)
         {
             Vector3 posChild = GetCirclePosition(sunParent, Random.Range(minDistance * 2, maxDistance * 2), angle);
-            if (IsCirlceInRect(posChild, minDistance, colliderArea.bounds.min, colliderArea.bounds.max) && !CanSunCollide(posChild))
+            if (IsCirlceInRect(posChild, colliderArea.bounds.min, colliderArea.bounds.max) && !CanSunCollide(posChild))
             {
                 return posChild;
             }
@@ -151,7 +95,7 @@ public class SunsBuilder : MonoBehaviour
     {
         float distance = Vector3.Distance(posFirst, posSun);
         listSuns.Add(posSun);
-        mapSunDistances.Add(distance, posSun);
+        if(IsSunAptForTarget(posSun, minDistance, colliderArea.bounds.min, colliderArea.bounds.max)) mapSunDistances.Add(distance, posSun);
     }
 
     public Vector3 IndentifyFarSun()
@@ -172,30 +116,15 @@ public class SunsBuilder : MonoBehaviour
         return posFar;
     }
 
-    public Vector3 IdentifyRandomFastSun()
+    public Vector3 IdentifyRandomFarSun()
     {
         List<float> listDistances = new List<float>(mapSunDistances.Keys);
-        int idxRandomFast = Random.Range(listDistances.Count / fastPartsArea * (fastPartsArea-1), listDistances.Count);
-        if (idxRandomFast >= listDistances.Count) idxRandomFast = listDistances.Count - 1;
-        if (idxRandomFast < 0) idxRandomFast = 0;
+        int idxRandomFar = Random.Range(listDistances.Count / farPartsArea * (farPartsArea-1), listDistances.Count);
+        if (idxRandomFar >= listDistances.Count) idxRandomFar = listDistances.Count - 1;
+        if (idxRandomFar < 0) idxRandomFar = 0;
 
-        float distanceRandom = listDistances[idxRandomFast];
+        float distanceRandom = listDistances[idxRandomFar];
         return mapSunDistances[distanceRandom];
-    }
-
-
-    // Función para obtener una posición aleatoria en el perímetro de la circunferencia.
-    Vector2 GetCircleRandomPosition(Vector2 center, float radio)
-    {
-        // Genera un ángulo aleatorio en radianes (entre 0 y 2PI).
-        float randomAngle = Random.Range(0f, 2f * Mathf.PI);
-
-        // Calcula las coordenadas (x, y) del punto en el perímetro de la circunferencia.
-        float x = center.x + radio * Mathf.Cos(randomAngle);
-        float y = center.y + radio * Mathf.Sin(randomAngle);
-
-        // Retorna un Vector2 con las coordenadas obtenidas.
-        return new Vector2(x, y);
     }
 
     // Función para obtener una posición en el perímetro de la circunferencia dada por un angulo en grados
@@ -214,7 +143,7 @@ public class SunsBuilder : MonoBehaviour
 
     float GetRandomAngle()
     {
-        // Genera un ángulo aleatorio en radianes (entre 0 y 360).
+        // Genera un ángulo aleatorio en grados (entre 0 y 360).
         return Random.Range(0f, 360f);
     }
 
@@ -247,7 +176,15 @@ public class SunsBuilder : MonoBehaviour
         }
     }
 
-    bool IsCirlceInRect(Vector2 center, float radio, Vector2 rectMin, Vector2 rectMax)
+    bool IsCirlceInRect(Vector2 center, Vector2 rectMin, Vector2 rectMax)
+    {
+        return (center.x >= rectMin.x &&
+                center.x <= rectMax.x &&
+                center.y >= rectMin.y &&
+                center.y <= rectMax.y);
+    }
+
+    bool IsSunAptForTarget(Vector2 center, float radio, Vector2 rectMin, Vector2 rectMax)
     {
         return (center.x >= rectMin.x + radio &&
                 center.x <= rectMax.x - radio &&

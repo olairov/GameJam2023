@@ -10,6 +10,8 @@ public class OrbitingObjController : MonoBehaviour
     public float orbitRadius;
     private float objSize, orbitingSpeed, orbitWidthMultiplyer, orbitHeightMultiplayer, anglePos;
 
+    private bool imMoon;
+
     public Vector2 velocity;
 
     private Transform playerTransform;
@@ -22,6 +24,8 @@ public class OrbitingObjController : MonoBehaviour
 
         // Randomize in function of object's conditions the Speed, the Size, the rotation, the orbit variations, the Starting angle, the sprite and the color.
         CreateStats();
+
+        if(!imMoon) MapGenerator.planetsToGenerate -= 1;
     }
 
     void FixedUpdate()
@@ -59,6 +63,19 @@ public class OrbitingObjController : MonoBehaviour
         return y;
     }
 
+    public void makeTargetPlanet()
+    {
+        transform.localScale /= objSize;
+        objSize = 70;
+        transform.localScale *= objSize;
+
+        transform.GetComponent<GravityObject>().G *= 2;
+
+        MapGenerator.planetsToGenerate -= 1;
+
+        Debug.Log("MadeTargetPlanet");
+    }
+
     void CreateStats()
     {
         orbitingSpeed = Random.Range(7.5f, 20f);
@@ -66,7 +83,9 @@ public class OrbitingObjController : MonoBehaviour
 
         objSize = Random.Range(26f, 40f);
 
-        if (transform.parent.GetComponent<OrbitingObjController>())
+        if (transform.parent.GetComponent<OrbitingObjController>()) imMoon = true;
+
+        if (imMoon)
         {
             objSize /= 5;
 
@@ -83,7 +102,7 @@ public class OrbitingObjController : MonoBehaviour
         orbitWidthMultiplyer = Random.Range(0.9f, 1.2f);
         orbitHeightMultiplayer = Random.Range(0.8f, 1.1f);
 
-        anglePos = Random.Range(0, 365);
+        anglePos = Random.Range(0, 360);
 
         SpriteRenderer mySpriteRenderer = transform.GetComponent<SpriteRenderer>();
 
@@ -96,7 +115,7 @@ public class OrbitingObjController : MonoBehaviour
         transform.rotation = new Quaternion(0, 0, Random.Range(0, 360), 0);
     }
 
-    // To avoid strange colision and unrealistic physics when player lands.
+    // To avoid strange collision and unrealistic physics when player lands.
 
     private void OnTriggerEnter2D(Collider2D other)
     {

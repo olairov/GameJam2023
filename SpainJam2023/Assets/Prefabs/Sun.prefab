@@ -74,7 +74,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: ce44635f72f6a3c46b4fd864ccd7dc10, type: 3}
-  m_Color: {r: 1, g: 0.9515964, b: 0.5137255, a: 0.5882353}
+  m_Color: {r: 1, g: 0.9515964, b: 0.5137255, a: 0.23529412}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 1
@@ -216,6 +216,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planetPrefab_: {fileID: 3966865222021998247, guid: 77df762bf9e3a93468ebe005e73cc10e, type: 3}
+  light: {fileID: 4201525442701367074, guid: 4944bfff510e7f44884de5127b0c425f, type: 3}
 --- !u!1 &1977498017336041675
 GameObject:
   m_ObjectHideFlags: 0
@@ -230,7 +231,7 @@ GameObject:
   - component: {fileID: 1977498017336041673}
   m_Layer: 2
   m_Name: Light2D
-  m_TagString: Untagged
+  m_TagString: Light
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -263,7 +264,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Range: 1024
-  Color: {r: 1, g: 0.92811465, b: 0.514151, a: 1}
+  Color: {r: 1, g: 0.92811465, b: 0.514151, a: 0.5882353}
   Intensity: 1
   SortingLayer: Default
   SortingOrder: -1000
